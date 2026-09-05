@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NZ Curriculum Mathematics: Measurement Assessment</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+    .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- HEADER NAVBAR -->
+  <header class="gradient-bg text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="bg-teal-500 p-2 rounded-lg text-white font-bold text-xl">NZ</div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">Mathematics & Statistics: Measurement</h1>
+          <p class="text-xs text-slate-300">Diagnostic & Summative Assessment (Phases 3, 4 & 5)</p>
+        </div>
+      </div>
+      <button onclick="openTeacherModal()" class="bg-slate-700 hover:bg-slate-600 text-xs font-semibold px-3 py-2 rounded-md transition flex items-center space-x-1 border border-slate-600 mt-2 sm:mt-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        <span>Teacher Portal</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-6">
+
+    <!-- STUDENT INTRO FORM -->
+    <div id="setupCard" class="bg-white rounded-2xl p-6 sm:p-8 card-shadow border border-slate-200">
+      <div class="max-w-2xl mx-auto text-center space-y-4">
+        <span class="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold rounded-full uppercase tracking-wider">Diagnostic Assessment</span>
+        <h2 class="text-3xl font-extrabold text-slate-900">Measurement Assessment</h2>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          This test evaluates understanding across <strong>Phase 3</strong> (Questions 1–20), <strong>Phase 4</strong> (Questions 21–30), and <strong>Phase 5</strong> (Questions 31–40). Please enter your details below to start.
+        </p>
+
+        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 text-left space-y-4 my-6">
+          <h3 class="font-bold text-slate-800 text-sm border-b pb-2">Student Information</h3>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Full Name <span class="text-red-500">*</span></label>
+            <input type="text" id="studentName" placeholder="e.g. Wiremu Tāne" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Year Level <span class="text-red-500">*</span></label>
+            <input type="text" id="studentYear" placeholder="e.g. Year 7" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm outline-none">
+          </div>
+        </div>
+
+        <button onclick="startTest()" class="w-full sm:w-auto px-8 py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow-lg transition transform active:scale-95">
+          Begin Measurement Test &rarr;
+        </button>
+      </div>
+    </div>
+
+    <!-- TEST CONTENT -->
+    <div id="testContainer" class="hidden space-y-6">
+      <div class="sticky top-16 z-30 bg-white/95 backdrop-blur rounded-xl p-4 shadow-md border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+          <span class="text-xs font-bold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-md border" id="studentInfoBadge">Student</span>
+          <span class="text-xs font-semibold text-slate-500" id="progressCount">0 / 40 Answered</span>
+        </div>
+        <div class="w-full sm:w-64 bg-slate-200 rounded-full h-3 overflow-hidden">
+          <div id="progressBar" class="bg-teal-500 h-full w-0 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <div id="questionsList" class="space-y-6"></div>
+
+      <div class="bg-white p-6 rounded-2xl card-shadow border border-slate-200 text-center space-y-3">
+        <p class="text-sm text-slate-600">Review your answers above before submitting.</p>
+        <button onclick="submitTest()" class="px-10 py-4 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl shadow-lg transition transform active:scale-95 text-lg">
+          Submit Assessment & Analyze Results
+        </button>
+      </div>
+    </div>
+
+    <!-- DIAGNOSTIC RESULTS CARD -->
+    <div id="resultsCard" class="hidden bg-white rounded-2xl p-6 sm:p-8 card-shadow border border-slate-200 space-y-6">
+      <div class="border-b pb-6 text-center space-y-2">
+        <span class="px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold rounded-full uppercase tracking-wider">Official Diagnostic Profile</span>
+        <h2 class="text-3xl font-extrabold text-slate-900" id="resStudentName">Student Diagnostic Report</h2>
+        <p class="text-sm text-slate-500" id="resTimestamp"></p>
+      </div>
+
+      <div id="overallLevelBanner" class="p-6 rounded-2xl text-center space-y-2">
+        <span class="text-xs font-bold uppercase tracking-widest text-slate-600">Curriculum Placement</span>
+        <h3 class="text-2xl sm:text-3xl font-extrabold" id="resPlacementTitle">Analyzing...</h3>
+        <p class="text-sm max-w-2xl mx-auto" id="resPlacementDesc"></p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+          <span class="text-xs font-bold px-2 py-0.5 bg-blue-100 text-blue-800 rounded">Phase 3</span>
+          <div class="text-2xl font-extrabold text-slate-800" id="p3Score">0 / 20</div>
+          <p class="text-xs font-medium text-slate-500" id="p3Pct">0%</p>
+        </div>
+        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+          <span class="text-xs font-bold px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded">Phase 4</span>
+          <div class="text-2xl font-extrabold text-slate-800" id="p4Score">0 / 10</div>
+          <p class="text-xs font-medium text-slate-500" id="p4Pct">0%</p>
+        </div>
+        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+          <span class="text-xs font-bold px-2 py-0.5 bg-purple-100 text-purple-800 rounded">Phase 5</span>
+          <div class="text-2xl font-extrabold text-slate-800" id="p5Score">0 / 10</div>
+          <p class="text-xs font-medium text-slate-500" id="p5Pct">0%</p>
+        </div>
+      </div>
+
+      <div class="pt-4 flex flex-wrap justify-center gap-4">
+        <button onclick="window.print()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-lg text-sm transition">
+          Print Diagnostic Report
+        </button>
+        <button onclick="location.reload()" class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg text-sm transition">
+          Start New Attempt
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- TEACHER PORTAL MODAL -->
+  <div id="teacherModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 card-shadow border border-slate-200 space-y-6 relative">
+      <button onclick="closeTeacherModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 text-xl font-bold">&times;</button>
+
+      <div id="pinAuthSection" class="max-w-md mx-auto text-center space-y-4 py-8">
+        <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mx-auto text-xl font-bold">🔒</div>
+        <h3 class="text-2xl font-bold text-slate-800">Teacher Portal Authentication</h3>
+        <p class="text-xs text-slate-500">Enter PIN to access dashboard and CSV exports.</p>
+        <div class="flex justify-center items-center space-x-2">
+          <input type="password" id="teacherPin" placeholder="PIN" class="px-4 py-2.5 border border-slate-300 rounded-lg text-center text-lg font-mono outline-none w-36">
+          <button onclick="verifyPin()" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg transition text-sm">Unlock</button>
+        </div>
+        <p id="pinError" class="text-xs text-red-500 hidden font-semibold">Incorrect PIN!</p>
+      </div>
+
+      <div id="adminDashboard" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 gap-4">
+          <div>
+            <h3 class="text-2xl font-bold text-slate-900">Teacher Dashboard</h3>
+            <p class="text-xs text-slate-500">Connected Google Sheet: Active Webhook</p>
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="exportCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition flex items-center space-x-1 shadow">
+              <span>Download Detailed CSV</span>
+            </button>
+            <button onclick="clearRecords()" class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded-lg transition">Clear Local Records</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="w-full text-left text-xs text-slate-700">
+            <thead class="bg-slate-100 font-bold uppercase text-slate-600 border-b">
+              <tr>
+                <th class="p-3">Timestamp</th>
+                <th class="p-3">Name</th>
+                <th class="p-3">Year</th>
+                <th class="p-3">Phase 3 (/20)</th>
+                <th class="p-3">Phase 4 (/10)</th>
+                <th class="p-3">Phase 5 (/10)</th>
+                <th class="p-3">Total (/40)</th>
+                <th class="p-3">Placement</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const GOOGLE_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbygT9So7CzUhLYSy1Qs3ikeF8VZEFKzv7NqV33Cynt8VQ1B-fPTwma1LpAKiHSRJHHe/exec";
+    const TEACHER_PIN = "1335";
+
+    let studentData = { name: '', year: '' };
+    let userAnswers = {};
+
+    const questions = [
+      // PHASE 3 (Questions 1 to 20)
+      { id: 1, phase: 3, question: "Convert 450 cm into metres.", options: [{text:"45 m",isCorrect:false},{text:"4.5 m",isCorrect:true},{text:"0.45 m",isCorrect:false},{text:"4500 m",isCorrect:false}] },
+      { id: 2, phase: 3, question: "A rectangular garden bed measures 8 m in length and 5 m in width. What is its total perimeter?", options: [{text:"13 m",isCorrect:false},{text:"40 m",isCorrect:false},{text:"26 m",isCorrect:true},{text:"30 m",isCorrect:false}] },
+      { id: 3, phase: 3, question: "What is the area of a rectangle that is 12 cm long and 6 cm wide?", options: [{text:"72 cm²",isCorrect:true},{text:"36 cm²",isCorrect:false},{text:"18 cm²",isCorrect:false},{text:"144 cm²",isCorrect:false}] },
+      { id: 4, phase: 3, question: "What volume of liquid is measured in this cylinder?", svg: `<svg viewBox="0 0 100 140" class="w-32 h-40 mx-auto"><rect x="30" y="10" width="40" height="110" fill="#e2e8f0" stroke="#475569" stroke-width="2" rx="4"/><rect x="31" y="55" width="38" height="64" fill="#38bdf8" opacity="0.8"/><line x1="25" y1="20" x2="35" y2="20" stroke="#0f172a" stroke-width="1.5"/><line x1="25" y1="55" x2="35" y2="55" stroke="#0f172a" stroke-width="1.5"/><text x="12" y="58" font-size="8" font-weight="bold" fill="#0284c7">35 mL</text></svg>`, options: [{text:"30 mL",isCorrect:false},{text:"35 mL",isCorrect:true},{text:"40 mL",isCorrect:false},{text:"25 mL",isCorrect:false}] },
+      { id: 5, phase: 3, question: "A crate of Kumara weighs 2.5 kg. How many grams is this?", options: [{text:"250 g",isCorrect:false},{text:"25000 g",isCorrect:false},{text:"2500 g",isCorrect:true},{text:"25 g",isCorrect:false}] },
+      { id: 6, phase: 3, question: "A box has a height of 20 cm, width of 10 cm, and depth of 5 cm. What is its volume?", options: [{text:"1000 cm³",isCorrect:true},{text:"35 cm³",isCorrect:false},{text:"70 cm³",isCorrect:false},{text:"500 cm³",isCorrect:false}] },
+      { id: 7, phase: 3, question: "An assembly starts at 1:45 pm and concludes at 3:20 pm. What was the duration?", options: [{text:"1 hour 25 minutes",isCorrect:false},{text:"1 hour 35 minutes",isCorrect:true},{text:"2 hours 15 minutes",isCorrect:false},{text:"1 hour 45 minutes",isCorrect:false}] },
+      { id: 8, phase: 3, question: "Convert 8:15 pm into 24-hour time.", options: [{text:"08:15",isCorrect:false},{text:"18:15",isCorrect:false},{text:"20:15",isCorrect:true},{text:"22:15",isCorrect:false}] },
+      { id: 9, phase: 3, question: "Calculate the total perimeter of this L-shaped plan.", svg: `<svg viewBox="0 0 160 120" class="w-48 h-36 mx-auto"><path d="M 20 20 L 100 20 L 100 60 L 140 60 L 140 100 L 20 100 Z" fill="#f1f5f9" stroke="#334155" stroke-width="2"/><text x="55" y="15" font-size="9">6 m</text><text x="105" y="42" font-size="9">4 m</text><text x="115" y="85" font-size="9">4 m</text><text x="75" y="112" font-size="9">10 m</text><text x="5" y="65" font-size="9">9 m</text></svg>`, options: [{text:"29 m",isCorrect:false},{text:"38 m",isCorrect:true},{text:"42 m",isCorrect:false},{text:"32 m",isCorrect:false}] },
+      { id: 10, phase: 3, question: "A jug holds 1.8 L of liquid. How many millilitres (mL) is this?", options: [{text:"180 mL",isCorrect:false},{text:"1800 mL",isCorrect:true},{text:"18000 mL",isCorrect:false},{text:"18 mL",isCorrect:false}] },
+      { id: 11, phase: 3, question: "What angle measurement is shown below?", svg: `<svg viewBox="0 0 160 90" class="w-48 h-28 mx-auto"><path d="M 10 80 A 70 70 0 0 1 150 80 Z" fill="#e2e8f0" stroke="#475569" stroke-width="2"/><line x1="80" y1="80" x2="110" y2="17" stroke="#dc2626" stroke-width="2"/><text x="115" y="20" font-size="9" fill="#dc2626">65°</text></svg>`, options: [{text:"115°",isCorrect:false},{text:"65°",isCorrect:true},{text:"55°",isCorrect:false},{text:"75°",isCorrect:false}] },
+      { id: 12, phase: 3, question: "Which is the best estimate for the length of a rugby field?", options: [{text:"10 m",isCorrect:false},{text:"100 m",isCorrect:true},{text:"1 km",isCorrect:false},{text:"1000 cm",isCorrect:false}] },
+      { id: 13, phase: 3, question: "Find the area of the shaded shape where each grid unit is 1 cm².", svg: `<svg viewBox="0 0 100 100" class="w-32 h-32 mx-auto"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#cbd5e1" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(#grid)" stroke="#94a3b8"/><polygon points="20,20 80,20 80,60 40,80 20,60" fill="#2dd4bf" opacity="0.7" stroke="#0d9488" stroke-width="2"/></svg>`, options: [{text:"14 cm²",isCorrect:false},{text:"16 cm²",isCorrect:true},{text:"18 cm²",isCorrect:false},{text:"12 cm²",isCorrect:false}] },
+      { id: 14, phase: 3, question: "A bus leaves at 09:35 and takes 48 minutes. What is the arrival time?", options: [{text:"10:13",isCorrect:false},{text:"10:23",isCorrect:true},{text:"10:28",isCorrect:false},{text:"09:83",isCorrect:false}] },
+      { id: 15, phase: 3, question: "Combine 750 g flour, 1.2 kg sugar, and 300 g butter. Total mass in kilograms?", options: [{text:"2.25 kg",isCorrect:true},{text:"2.5 kg",isCorrect:false},{text:"22.5 kg",isCorrect:false},{text:"2.05 kg",isCorrect:false}] },
+      { id: 16, phase: 3, question: "What temperature is shown on this thermometer?", svg: `<svg viewBox="0 0 60 120" class="w-20 h-36 mx-auto"><rect x="22" y="10" width="16" height="90" fill="#e2e8f0" stroke="#475569" stroke-width="2" rx="8"/><circle cx="30" cy="100" r="12" fill="#ef4444"/><rect x="26" y="65" width="8" height="35" fill="#ef4444"/><text x="47" y="68" font-size="7" fill="#ef4444">-4°C</text></svg>`, options: [{text:"4°C",isCorrect:false},{text:"-4°C",isCorrect:true},{text:"-6°C",isCorrect:false},{text:"0°C",isCorrect:false}] },
+      { id: 17, phase: 3, question: "An equilateral triangle has a side length of 14 cm. What is its perimeter?", options: [{text:"28 cm",isCorrect:false},{text:"42 cm",isCorrect:true},{text:"56 cm",isCorrect:false},{text:"98 cm",isCorrect:false}] },
+      { id: 18, phase: 3, question: "Which unit is best suited to measure liquid volume in a teaspoon?", options: [{text:"Litres (L)",isCorrect:false},{text:"Millilitres (mL)",isCorrect:true},{text:"Kilograms (kg)",isCorrect:false},{text:"Cubic metres (m³)",isCorrect:false}] },
+      { id: 19, phase: 3, question: "A square tile has a perimeter of 36 cm. What is its area?", options: [{text:"36 cm²",isCorrect:false},{text:"81 cm²",isCorrect:true},{text:"144 cm²",isCorrect:false},{text:"9 cm²",isCorrect:false}] },
+      { id: 20, phase: 3, question: "On a map scale, 1 cm represents 5 km. Real distance for 7 cm on the map?", options: [{text:"12 km",isCorrect:false},{text:"35 km",isCorrect:true},{text:"70 km",isCorrect:false},{text:"3.5 km",isCorrect:false}] },
+
+      // PHASE 4 (Questions 21 to 30)
+      { id: 21, phase: 4, question: "Calculate the area of a triangle with base 12 cm and height 7 cm.", svg: `<svg viewBox="0 0 160 100" class="w-44 h-28 mx-auto"><polygon points="20,80 140,80 60,20" fill="#f8fafc" stroke="#334155" stroke-width="2"/><line x1="60" y1="20" x2="60" y2="80" stroke="#94a3b8" stroke-dasharray="3,3"/><text x="70" y="55" font-size="9">7 cm</text><text x="75" y="95" font-size="9">12 cm</text></svg>`, options: [{text:"84 cm²",isCorrect:false},{text:"42 cm²",isCorrect:true},{text:"19 cm²",isCorrect:false},{text:"38 cm²",isCorrect:false}] },
+      { id: 22, phase: 4, question: "A trapezium has parallel sides of 8 cm and 14 cm, and height 5 cm. Calculate its area.", options: [{text:"55 cm²",isCorrect:true},{text:"110 cm²",isCorrect:false},{text:"40 cm²",isCorrect:false},{text:"70 cm²",isCorrect:false}] },
+      { id: 23, phase: 4, question: "Circumference of a wheel with diameter 10 cm? (Use π ≈ 3.142)", options: [{text:"31.42 cm",isCorrect:true},{text:"78.55 cm",isCorrect:false},{text:"15.71 cm",isCorrect:false},{text:"62.84 cm",isCorrect:false}] },
+      { id: 24, phase: 4, question: "Area of a circular pond with radius 4 m? (Use π ≈ 3.142)", options: [{text:"25.13 m²",isCorrect:false},{text:"50.27 m²",isCorrect:true},{text:"100.54 m²",isCorrect:false},{text:"12.57 m²",isCorrect:false}] },
+      { id: 25, phase: 4, question: "Volume of a cylinder with radius 3 cm and height 10 cm? (Use π ≈ 3.142)", svg: `<svg viewBox="0 0 120 120" class="w-32 h-32 mx-auto"><ellipse cx="60" cy="30" rx="40" ry="15" fill="#e2e8f0" stroke="#334155" stroke-width="2"/><path d="M 20 30 L 20 90 A 40 15 0 0 0 100 90 L 100 30 Z" fill="#f1f5f9" stroke="#334155" stroke-width="2"/><text x="70" y="25" font-size="8" fill="#dc2626">r = 3 cm</text><text x="105" y="65" font-size="8">h = 10 cm</text></svg>`, options: [{text:"94.26 cm³",isCorrect:false},{text:"282.78 cm³",isCorrect:true},{text:"188.52 cm³",isCorrect:false},{text:"60 cm³",isCorrect:false}] },
+      { id: 26, phase: 4, question: "Surface area of a block measuring 4 cm × 3 cm × 5 cm?", options: [{text:"60 cm²",isCorrect:false},{text:"94 cm²",isCorrect:true},{text:"47 cm²",isCorrect:false},{text:"120 cm²",isCorrect:false}] },
+      { id: 27, phase: 4, question: "A vehicle travels at 80 km/h for 2.5 hours. Total distance covered?", options: [{text:"160 km",isCorrect:false},{text:"200 km",isCorrect:true},{text:"32 km",isCorrect:false},{text:"240 km",isCorrect:false}] },
+      { id: 28, phase: 4, question: "Convert 0.45 m³ into litres (1 m³ = 1000 L).", options: [{text:"45 L",isCorrect:false},{text:"450 L",isCorrect:true},{text:"4500 L",isCorrect:false},{text:"4.5 L",isCorrect:false}] },
+      { id: 29, phase: 4, question: "Calculate area of a parallelogram with base 15 cm and height 8 cm.", svg: `<svg viewBox="0 0 160 90" class="w-44 h-24 mx-auto"><polygon points="30,70 120,70 150,20 60,20" fill="#f8fafc" stroke="#334155" stroke-width="2"/><text x="65" y="50" font-size="8">h = 8 cm</text><text x="70" y="83" font-size="8">b = 15 cm</text></svg>`, options: [{text:"120 cm²",isCorrect:true},{text:"150 cm²",isCorrect:false},{text:"60 cm²",isCorrect:false},{text:"46 cm²",isCorrect:false}] },
+      { id: 30, phase: 4, question: "Volume of a triangular prism: base 6 cm, height 4 cm, length 12 cm?", options: [{text:"288 cm³",isCorrect:false},{text:"144 cm³",isCorrect:true},{text:"72 cm³",isCorrect:false},{text:"22 cm³",isCorrect:false}] },
+
+      // PHASE 5 (Questions 31 to 40)
+      { id: 31, phase: 5, question: "A board 14 cm × 10 cm has a semicircular cut (diameter 14 cm). Remaining area? (π ≈ 3.142)", svg: `<svg viewBox="0 0 160 100" class="w-44 h-28 mx-auto"><path d="M 20 20 L 140 20 L 140 80 L 20 80 Z" fill="#cbd5e1" stroke="#334155" stroke-width="2"/><path d="M 20 50 A 35 35 0 0 1 140 50 Z" fill="#ffffff" stroke="#334155" stroke-width="2"/><text x="70" y="15" font-size="8">14 cm</text></svg>`, options: [{text:"63.07 cm²",isCorrect:true},{text:"140 cm²",isCorrect:false},{text:"76.93 cm²",isCorrect:false},{text:"216.93 cm²",isCorrect:false}] },
+      { id: 32, phase: 5, question: "A 5 m ladder rests against a wall with its base 3 m from the wall. Height reached?", options: [{text:"4 m",isCorrect:true},{text:"2 m",isCorrect:false},{text:"5.8 m",isCorrect:false},{text:"16 m",isCorrect:false}] },
+      { id: 33, phase: 5, question: "Total surface area of a closed cylinder: radius 5 cm, height 12 cm? (π ≈ 3.142)", options: [{text:"376.99 cm²",isCorrect:false},{text:"534.07 cm²",isCorrect:true},{text:"600 cm²",isCorrect:false},{text:"267.04 cm²",isCorrect:false}] },
+      { id: 34, phase: 5, question: "Scale factor 1 : 3. If original area is 15 m², what is enlarged area?", options: [{text:"45 m²",isCorrect:false},{text:"135 m²",isCorrect:true},{text:"405 m²",isCorrect:false},{text:"90 m²",isCorrect:false}] },
+      { id: 35, phase: 5, question: "Volume of a cone with radius 6 cm and height 14 cm? V = (1/3)π r² h", svg: `<svg viewBox="0 0 120 120" class="w-32 h-32 mx-auto"><ellipse cx="60" cy="100" rx="40" ry="12" fill="#e2e8f0" stroke="#334155" stroke-width="2"/><polygon points="20,100 60,15 100,100" fill="#f1f5f9" opacity="0.6" stroke="#334155" stroke-width="2"/><text x="65" y="60" font-size="8" fill="#dc2626">h = 14 cm</text><text x="70" y="112" font-size="8" fill="#0d9488">r = 6 cm</text></svg>`, options: [{text:"527.78 cm³",isCorrect:true},{text:"1583.35 cm³",isCorrect:false},{text:"263.89 cm³",isCorrect:false},{text:"504.00 cm³",isCorrect:false}] },
+      { id: 36, phase: 5, question: "A timber beam is measured as 2.40 m (nearest cm). Strict upper bound for actual length?", options: [{text:"2.405 m",isCorrect:true},{text:"2.45 m",isCorrect:false},{text:"2.41 m",isCorrect:false},{text:"2.50 m",isCorrect:false}] },
+      { id: 37, phase: 5, question: "Standing 50 m from a cliff, angle of elevation is 30°. Cliff height? (tan 30° ≈ 0.5774)", svg: `<svg viewBox="0 0 160 100" class="w-44 h-28 mx-auto"><polygon points="20,80 130,80 130,20" fill="none" stroke="#334155" stroke-width="2"/><text x="45" y="75" font-size="7" fill="#dc2626">30°</text><text x="65" y="92" font-size="8">50 m</text></svg>`, options: [{text:"28.9 m",isCorrect:true},{text:"43.3 m",isCorrect:false},{text:"25.0 m",isCorrect:false},{text:"86.6 m",isCorrect:false}] },
+      { id: 38, phase: 5, question: "Volume = 250 cm³, Density = 8.4 g/cm³. Calculate mass in kilograms.", options: [{text:"2.1 kg",isCorrect:true},{text:"2100 kg",isCorrect:false},{text:"29.76 kg",isCorrect:false},{text:"0.21 kg",isCorrect:false}] },
+      { id: 39, phase: 5, question: "Pizza slice with radius 18 cm and angle 40°. What is the arc length? (π ≈ 3.142)", options: [{text:"12.57 cm",isCorrect:true},{text:"25.13 cm",isCorrect:false},{text:"113.10 cm",isCorrect:false},{text:"6.28 cm",isCorrect:false}] },
+      { id: 40, phase: 5, question: "Scale model boat ratio 1 : 20. Real boat holds 1600 L fuel. Model capacity in mL?", options: [{text:"200 mL",isCorrect:true},{text:"800 mL",isCorrect:false},{text:"80 mL",isCorrect:false},{text:"4000 mL",isCorrect:false}] }
+    ];
+
+    function startTest() {
+      const name = document.getElementById('studentName').value.trim();
+      const year = document.getElementById('studentYear').value.trim();
+
+      if (!name || !year) {
+        alert("Please enter your name and year level.");
+        return;
+      }
+
+      studentData.name = name;
+      studentData.year = year;
+
+      document.getElementById('setupCard').classList.add('hidden');
+      document.getElementById('testContainer').classList.remove('hidden');
+      document.getElementById('studentInfoBadge').innerText = `${name} (${year})`;
+
+      renderQuestions();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsList');
+      container.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        let phaseBadgeClass = q.phase === 3 ? 'bg-blue-100 text-blue-800' : (q.phase === 4 ? 'bg-indigo-100 text-indigo-800' : 'bg-purple-100 text-purple-800');
+        let card = document.createElement('div');
+        card.className = "bg-white p-6 rounded-2xl card-shadow border border-slate-200 space-y-4";
+        
+        let headerHtml = `
+          <div class="flex justify-between items-center border-b pb-3">
+            <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-md ${phaseBadgeClass}">
+              Phase ${q.phase} • Question ${idx + 1}
+            </span>
+            <span class="text-xs font-semibold text-slate-400">NZC Phase ${q.phase}</span>
+          </div>
+          <p class="text-slate-800 font-medium text-base">${q.question}</p>
+        `;
+
+        if (q.svg) {
+          headerHtml += `<div class="py-2 bg-slate-50 rounded-xl border border-slate-100">${q.svg}</div>`;
+        }
+
+        let optionsHtml = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">`;
+        q.options.forEach((opt, oIdx) => {
+          optionsHtml += `
+            <button onclick="selectOption(${q.id}, ${oIdx}, this)" class="opt-btn-${q.id} w-full text-left p-3.5 border-2 border-slate-200 rounded-xl hover:border-teal-500 hover:bg-teal-50/50 transition font-medium text-sm text-slate-700 flex items-center space-x-3">
+              <span class="w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-500 bg-slate-100 flex-shrink-0">${String.fromCharCode(65 + oIdx)}</span>
+              <span class="flex-grow">${opt.text}</span>
+            </button>
+          `;
+        });
+        optionsHtml += `</div>`;
+
+        card.innerHTML = headerHtml + optionsHtml;
+        container.appendChild(card);
+      });
+    }
+
+    function selectOption(qId, oIdx, btn) {
+      userAnswers[qId] = oIdx;
+
+      document.querySelectorAll(`.opt-btn-${qId}`).forEach(b => {
+        b.classList.remove('border-teal-600', 'bg-teal-50', 'text-teal-900', 'ring-2', 'ring-teal-500/20');
+        b.classList.add('border-slate-200', 'text-slate-700');
+      });
+
+      btn.classList.remove('border-slate-200', 'text-slate-700');
+      btn.classList.add('border-teal-600', 'bg-teal-50', 'text-teal-900', 'ring-2', 'ring-teal-500/20');
+
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const count = Object.keys(userAnswers).length;
+      document.getElementById('progressCount').innerText = `${count} / 40 Answered`;
+      document.getElementById('progressBar').style.width = `${(count / 40) * 100}%`;
+    }
+
+    function submitTest() {
+      let p3 = 0, p4 = 0, p5 = 0;
+
+      questions.forEach(q => {
+        const sel = userAnswers[q.id];
+        if (sel !== undefined && q.options[sel].isCorrect) {
+          if (q.phase === 3) p3++;
+          if (q.phase === 4) p4++;
+          if (q.phase === 5) p5++;
+        }
+      });
+
+      const total = p3 + p4 + p5;
+      const pct = Math.round((total / 40) * 100);
+      const placement = getPlacementTitle(p3, p4, p5);
+
+      const record = {
+        timestamp: new Date().toLocaleString('en-NZ'),
+        name: studentData.name,
+        year: studentData.year,
+        p3: p3,
+        p4: p4,
+        p5: p5,
+        total: total,
+        pct: pct,
+        placement: placement
+      };
+
+      saveRecord(record);
+      sendToGoogleWebhook(record);
+
+      document.getElementById('testContainer').classList.add('hidden');
+      document.getElementById('resultsCard').classList.remove('hidden');
+
+      document.getElementById('resStudentName').innerText = `${studentData.name} (${studentData.year})`;
+      document.getElementById('resTimestamp').innerText = `Completed on ${record.timestamp}`;
+
+      document.getElementById('p3Score').innerText = `${p3} / 20`;
+      document.getElementById('p3Pct').innerText = `${Math.round((p3/20)*100)}% Mastery`;
+
+      document.getElementById('p4Score').innerText = `${p4} / 10`;
+      document.getElementById('p4Pct').innerText = `${Math.round((p4/10)*100)}% Mastery`;
+
+      document.getElementById('p5Score').innerText = `${p5} / 10`;
+      document.getElementById('p5Pct').innerText = `${Math.round((p5/10)*100)}% Mastery`;
+
+      document.getElementById('resPlacementTitle').innerText = placement;
+      document.getElementById('resPlacementDesc').innerText = `Scored ${total}/40 overall across Phase 3, 4, and 5 measurement objectives.`;
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function getPlacementTitle(p3, p4, p5) {
+      if (p5 >= 7) return "Phase 5 Mastery";
+      if (p4 >= 7) return "Phase 4 Proficient / Transitioning to Phase 5";
+      if (p3 >= 14) return "Phase 3 Proficient / Transitioning to Phase 4";
+      return "Consolidating Phase 3 Foundations";
+    }
+
+    function saveRecord(record) {
+      let records = JSON.parse(localStorage.getItem('nz_math_results') || '[]');
+      records.push(record);
+      localStorage.setItem('nz_math_results', JSON.stringify(records));
+    }
+
+    function sendToGoogleWebhook(record) {
+      fetch(GOOGLE_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(record)
+      }).catch(err => console.log("Transmit error:", err));
+    }
+
+    function openTeacherModal() {
+      document.getElementById('teacherModal').classList.remove('hidden');
+    }
+
+    function closeTeacherModal() {
+      document.getElementById('teacherModal').classList.add('hidden');
+    }
+
+    function verifyPin() {
+      if (document.getElementById('teacherPin').value === TEACHER_PIN) {
+        document.getElementById('pinAuthSection').classList.add('hidden');
+        document.getElementById('adminDashboard').classList.remove('hidden');
+        document.getElementById('pinError').classList.add('hidden');
+        renderAdminTable();
+      } else {
+        document.getElementById('pinError').classList.remove('hidden');
+      }
+    }
+
+    function renderAdminTable() {
+      const records = JSON.parse(localStorage.getItem('nz_math_results') || '[]');
+      const tbody = document.getElementById('adminTableBody');
+      tbody.innerHTML = '';
+
+      if (records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">No local student submissions stored on this browser yet.</td></tr>`;
+        return;
+      }
+
+      records.forEach(r => {
+        let tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50";
+        tr.innerHTML = `
+          <td class="p-3 text-slate-500">${r.timestamp}</td>
+          <td class="p-3 font-bold text-slate-800">${r.name}</td>
+          <td class="p-3">${r.year}</td>
+          <td class="p-3 font-semibold text-blue-600">${r.p3} / 20</td>
+          <td class="p-3 font-semibold text-indigo-600">${r.p4} / 10</td>
+          <td class="p-3 font-semibold text-purple-600">${r.p5} / 10</td>
+          <td class="p-3 font-extrabold text-slate-900">${r.total} / 40 (${r.pct}%)</td>
+          <td class="p-3 font-medium text-slate-700">${r.placement}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportCSV() {
+      const records = JSON.parse(localStorage.getItem('nz_math_results') || '[]');
+      if (records.length === 0) {
+        alert("No records to export.");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Timestamp,Student Name,Year Level,Phase 3 Score (/20),Phase 4 Score (/10),Phase 5 Score (/10),Total Score (/40),Percentage,Curriculum Placement\n";
+
+      records.forEach(r => {
+        csvContent += `"${r.timestamp}","${r.name}","${r.year}",${r.p3},${r.p4},${r.p5},${r.total},${r.pct}%,"${r.placement}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `NZ_Maths_Measurement_Results_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function clearRecords() {
+      if (confirm("Clear local records on this browser?")) {
+        localStorage.removeItem('nz_math_results');
+        renderAdminTable();
+      }
+    }
+  </script>
+</body>
+</html>
